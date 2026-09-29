@@ -1,62 +1,74 @@
 #!/usr/bin/env python3
-from __future__ import annotations
-from typing import Protocol
-
-
-class Observer(Protocol):
-    def update(self, topic: str, data: str) -> None: ...
+"""Observer design pattern example."""
 
 
 class NewsSubject:
-    def __init__(self) -> None:
-        self._subs: dict[Observer, set[str] | None] = {}
+    """Manage and notify news subscribers."""
 
-    def subscribe(self, observer: Observer, topics: set[str] | None = None) -> None:
-        if observer in self._subs:
-            return  # ignore duplicate subscribe for same instance
-        self._subs[observer] = topics
+    def __init__(self):
+        """Initialize the subscriber list."""
+        self._subscribers = []
 
-    def unsubscribe(self, observer: Observer) -> None:
-        self._subs.pop(observer, None)
+    def subscribe(self, observer, topics=None):
+        """Subscribe an observer to selected topics."""
+        self._subscribers.append((observer, topics))
 
-    def notify(self, topic: str, data: str) -> None:
-        for observer, interests in list(self._subs.items()):
-            if interests is not None and topic not in interests:
-                continue
-            observer.update(topic, data)
+    def unsubscribe(self, observer):
+        """Unsubscribe an observer."""
+        self._subscribers = [
+            subscription
+            for subscription in self._subscribers
+            if subscription[0] is not observer
+        ]
+
+    def notify(self, topic, data):
+        """Notify subscribed observers."""
+        for observer, topics in list(self._subscribers):
+            if topics is None or topic in topics:
+                observer.update(topic, data)
 
 
 class LogObserver:
-    def update(self, topic: str, data: str) -> None:
+    """Log news events."""
+
+    def update(self, topic, data):
+        """Print a log notification."""
         print(f"log:{topic}={data}")
 
 
 class EmailObserver:
-    def update(self, topic: str, data: str) -> None:
+    """Email news events."""
+
+    def update(self, topic, data):
+        """Print an email notification."""
         print(f"email:{topic}={data}")
 
 
-# TODO: implement SmsObserver
-# Its update(topic, data) method must print:  sms:<topic>=<data>
-
-
 class SmsObserver:
+    """Send SMS news events."""
+
     def update(self, topic, data):
+        """Print an SMS notification."""
         print(f"sms:{topic}={data}")
 
 
-def main() -> None:
+def main():
+    """Run the observer example."""
     subject = NewsSubject()
-    sms = SmsObserver()
 
-    log = LogObserver()
-    email = EmailObserver()
+    log_observer = LogObserver()
+    email_observer = EmailObserver()
+    sms_observer = SmsObserver()
 
-    subject.subscribe(log, topics={"sports", "breaking"})
-    subject.subscribe(email)  # None = receives all topics
-    subject.subscribe(sms, topics={"breaking"})
-
-    # TODO: instantiate SmsObserver and subscribe it to topics={"breaking"} only
+    subject.subscribe(
+        log_observer,
+        topics={"sports", "breaking"}
+    )
+    subject.subscribe(email_observer)
+    subject.subscribe(
+        sms_observer,
+        topics={"breaking"}
+    )
 
     subject.notify("weather", "rain")
     subject.notify("sports", "goal")
