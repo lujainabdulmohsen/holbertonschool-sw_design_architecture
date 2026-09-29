@@ -40,8 +40,14 @@ class EmailObserver:
 # Its update(topic, data) method must print:  sms:<topic>=<data>
 
 
+class SmsObserver:
+    def update(self, topic, data):
+        print(f"sms:{topic}={data}")
+
+
 def main() -> None:
     subject = NewsSubject()
+    sms = SmsObserver()
 
     log = LogObserver()
     email = EmailObserver()
