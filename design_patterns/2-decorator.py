@@ -1,75 +1,89 @@
 #!/usr/bin/env python3
-from __future__ import annotations
+"""Decorator design pattern example."""
+
 from abc import ABC, abstractmethod
 
 
 class Beverage(ABC):
-    @abstractmethod
-    def cost(self) -> int: ...
+    """Base beverage interface."""
 
     @abstractmethod
-    def description(self) -> str: ...
+    def cost(self):
+        """Return beverage cost."""
+
+    @abstractmethod
+    def description(self):
+        """Return beverage description."""
 
 
 class Coffee(Beverage):
-    def cost(self) -> int:
+    """Basic coffee."""
+
+    def cost(self):
+        """Return coffee cost."""
         return 50
 
-    def description(self) -> str:
+    def description(self):
+        """Return coffee description."""
         return "Coffee"
 
 
-class MilkDecorator(Beverage):
-    def __init__(self, inner: Beverage) -> None:
+class BeverageDecorator(Beverage):
+    """Base beverage decorator."""
+
+    def __init__(self, inner):
+        """Initialize decorator."""
         self._inner = inner
 
-    def cost(self) -> int:
+
+class MilkDecorator(BeverageDecorator):
+    """Add milk."""
+
+    def cost(self):
+        """Return cost with milk."""
         return self._inner.cost() + 10
 
-    def description(self) -> str:
+    def description(self):
+        """Return description with milk."""
         return self._inner.description() + " + milk"
 
 
-class SugarDecorator(Beverage):
-    def __init__(self, inner: Beverage) -> None:
-        self._inner = inner
+class SugarDecorator(BeverageDecorator):
+    """Add sugar."""
 
-    def cost(self) -> int:
+    def cost(self):
+        """Return cost with sugar."""
         return self._inner.cost() + 5
 
-    def description(self) -> str:
+    def description(self):
+        """Return description with sugar."""
         return self._inner.description() + " + sugar"
 
 
-# TODO: implement CaramelDecorator following the same pattern as MilkDecorator
-# cost(): self._inner.cost() + 15
-# description(): self._inner.description() + " + caramel"
+class CaramelDecorator(BeverageDecorator):
+    """Add caramel."""
 
-
-class CaramelDecorator(Beverage):
-    def __init__(self, inner: Beverage) -> None:
-        self._inner = inner
-
-    def cost(self) -> int:
+    def cost(self):
+        """Return cost with caramel."""
         return self._inner.cost() + 15
 
-    def description(self) -> str:
+    def description(self):
+        """Return description with caramel."""
         return self._inner.description() + " + caramel"
 
 
-# TODO: implement CaramelDecorator following the same pattern as MilkDecorator
-# cost(): self._inner.cost() + 15
-# description(): self._inner.description() + " + caramel"
+def main():
+    """Run decorator examples."""
+    drink1 = MilkDecorator(Coffee())
+    print(drink1.description(), drink1.cost())
 
+    drink2 = MilkDecorator(SugarDecorator(Coffee()))
+    print(drink2.description(), drink2.cost())
 
-def main() -> None:
-    cup1 = MilkDecorator(Coffee())
-    print(cup1.description(), cup1.cost())
-
-    cup2 = MilkDecorator(SugarDecorator(Coffee()))
-    print(cup2.description(), cup2.cost())
-
-    # TODO: build CaramelDecorator(MilkDecorator(SugarDecorator(Coffee()))) and print it
+    drink3 = CaramelDecorator(
+        MilkDecorator(SugarDecorator(Coffee()))
+    )
+    print(drink3.description(), drink3.cost())
 
 
 if __name__ == "__main__":
