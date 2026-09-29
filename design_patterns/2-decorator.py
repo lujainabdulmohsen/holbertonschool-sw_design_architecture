@@ -61,6 +61,7 @@ class CaramelDecorator(Beverage):
 # cost(): self._inner.cost() + 15
 # description(): self._inner.description() + " + caramel"
 
+
 def main() -> None:
     cup1 = MilkDecorator(Coffee())
     print(cup1.description(), cup1.cost())
@@ -70,11 +71,6 @@ def main() -> None:
 
     # TODO: build CaramelDecorator(MilkDecorator(SugarDecorator(Coffee()))) and print it
 
-
-    caramel = CaramelDecorator(
-        MilkDecorator(SugarDecorator(Coffee()))
-    )
-    print(caramel.description(), caramel.cost())
 
 if __name__ == "__main__":
     main()
