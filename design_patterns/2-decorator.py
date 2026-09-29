@@ -76,6 +76,5 @@ def main() -> None:
     )
     print(caramel.description(), caramel.cost())
 
-
 if __name__ == "__main__":
     main()
